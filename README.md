@@ -1,7 +1,6 @@
 # Online Examination System
 
-CLI based Online Examination System using Python.
-# Online Examination System
+CLI-based Online Examination System using Python.
 
 ## Overview
 A Python-based web application for students to **register, log in, take MCQ exams, and get instant results**.  
@@ -24,6 +23,7 @@ Secure login, automatic evaluation, and exam result storage ensure a real-world 
 4. **Reattempt Restriction:** Students cannot retake the same exam.
 
 ---
+
 ## Project Structure
 
 online-exam-system/
@@ -36,11 +36,11 @@ online-exam-system/
 ├── exam_project/
 └── README.md
 
-
+---
 
 ## Installation
 ```bash
 git clone https://github.com/<your-username>/<your-repo-name>.git
 cd <your-repo-name>
-pip install -r requirements.txt   # if dependencies exist
+pip install -r requirements.txt   
 python manage.py runserver

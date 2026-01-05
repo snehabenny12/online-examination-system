@@ -1,0 +1,4 @@
+john_doe,password123,john@example.com,John Doe
+jane_smith,pass456,jane@example.com,Jane Smith
+student1,test123,student1@test.com,Student One
+student2,test456,student2@test.com,Student Two

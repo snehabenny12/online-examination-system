@@ -1,0 +1,626 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Examination</title>
+    <link rel="stylesheet" href="{% static 'exam/style.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .timer.time-warning {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .exam-wrapper {
+            max-width: 900px;
+            margin: 80px auto 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .exam-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .exam-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .exam-content {
+            padding: 40px;
+        }
+
+        .question-number {
+            text-align: center;
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .question-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-item:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option-item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .option-item label {
+            font-size: 16px;
+            color: #4a5568;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .option-item input[type="radio"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .option-item input[type="radio"]:checked ~ .option-item,
+        .option-item:has(input[type="radio"]:checked) {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .nav-btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #prev-btn {
+            background: #718096;
+            color: white;
+        }
+
+        #prev-btn:not(:disabled):hover {
+            background: #4a5568;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
+        }
+
+        #next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        #next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #submit-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        #submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 20px;
+            color: #667eea;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: #e53e3e;
+        }
+
+        .error-container h3 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .exam-wrapper {
+                margin: 60px 10px 20px;
+                border-radius: 15px;
+            }
+
+            .exam-content {
+                padding: 25px;
+            }
+
+            .timer {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="timer" class="timer">Time Remaining: <span id="time-display">30:00</span></div>
+
+    <div class="exam-wrapper">
+        <div class="exam-header">
+            <h2>Online Examination System</h2>
+        </div>
+
+        {% if error %}
+            <div class="exam-content error-container">
+                <h3>{{ error }}</h3>
+                <a href="{% url 'logout' %}" class="nav-btn" style="background: #718096; color: white; text-decoration: none; display: inline-block; margin-top: 20px;">Logout</a>
+            </div>
+        {% else %}
+            <div id="loading" class="loading">Loading exam...</div>
+
+            <div id="exam-content" class="exam-content" style="display: none;">
+                <div id="question-number" class="question-number"></div>
+
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+
+                <form id="question-form">
+                    {% csrf_token %}
+                    <div id="question-container" class="question-container">
+                        <!-- Question content will be loaded here -->
+                    </div>
+                </form>
+
+                <div class="navigation">
+                    <button type="button" id="prev-btn" class="nav-btn" disabled>Previous</button>
+                    <button type="button" id="next-btn" class="nav-btn">Next</button>
+                    <button type="button" id="submit-btn" class="nav-btn" style="display: none;">Submit Exam</button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        let timeRemaining = 30 * 60; // 30 minutes in seconds (default, will be synced from server)
+        let timerInterval;
+        let timeWarningShown = false;
+        let currentQuestionIndex = 0;
+        let totalQuestions = 0;
+        let currentQuestionId = null;
+        let csrfToken = '';
+        let timerSynced = false;
+
+        // Get CSRF token function
+        function getCSRFToken() {
+            const token = document.querySelector('[name=csrfmiddlewaretoken]');
+            return token ? token.value : '';
+        }
+
+        // Timer functionality
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('time-display').textContent = timeString;
+
+            if (timeRemaining <= 300 && !timeWarningShown) { // 5 minutes warning
+                document.getElementById('timer').classList.add('time-warning');
+                timeWarningShown = true;
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                autoSubmit();
+                return;
+            }
+            timeRemaining--;
+        }
+
+        // Get remaining time from server
+        async function syncTimer() {
+            try {
+                const token = getCSRFToken();
+                const response = await fetch('/exam/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': token
+                    },
+                    body: JSON.stringify({ action: 'get_time' })
+                });
+                const data = await response.json();
+                timeRemaining = data.remaining_seconds;
+                timerSynced = true;
+                if (data.time_up) {
+                    autoSubmit();
+                }
+            } catch (error) {
+                console.error('Timer sync error:', error);
+                timerSynced = true; // Continue even if sync fails
+            }
+        }
+
+        // Load question content using get_question action
+        function loadQuestion(questionIndex) {
+            const token = getCSRFToken();
+            fetch('/exam/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': token
+                },
+                body: JSON.stringify({
+                    action: 'get_question',
+                    question_index: questionIndex
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.question) {
+                    displayQuestion(data);
+                } else {
+                    console.error('No question data received:', data);
+                }
+            })
+            .catch(error => console.error('Error loading question:', error));
+        }
+
+        // Display question
+        function displayQuestion(data) {
+            currentQuestionIndex = data.question_index;
+            totalQuestions = data.total_questions;
+            currentQuestionId = data.question.id;
+
+            // Update question number
+            document.getElementById('question-number').textContent =
+                `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
+
+            // Update progress bar
+            const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+
+            // Update question content
+            const questionHtml = `
+                <div class="question-text">${data.question.text}</div>
+                <div class="options">
+                    <div class="option-item">
+                        <input type="radio" name="answer" value="${data.question.option1}"
+                               ${data.saved_answer === data.question.option1 ? 'checked' : ''} id="option1">
+                        <label for="option1">${data.question.option1}</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="answer" value="${data.question.option2}"
+                               ${data.saved_answer === data.question.option2 ? 'checked' : ''} id="option2">
+                        <label for="option2">${data.question.option2}</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="answer" value="${data.question.option3}"
+                               ${data.saved_answer === data.question.option3 ? 'checked' : ''} id="option3">
+                        <label for="option3">${data.question.option3}</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="answer" value="${data.question.option4}"
+                               ${data.saved_answer === data.question.option4 ? 'checked' : ''} id="option4">
+                        <label for="option4">${data.question.option4}</label>
+                    </div>
+                </div>
+            `;
+            document.getElementById('question-container').innerHTML = questionHtml;
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').style.display = data.is_last ? 'none' : 'inline-block';
+            document.getElementById('submit-btn').style.display = data.is_last ? 'inline-block' : 'none';
+
+            // Add event listeners for radio buttons
+            document.querySelectorAll('input[name="answer"]').forEach(radio => {
+                radio.addEventListener('change', saveAnswer);
+            });
+        }
+
+        // Auto-submit when time expires
+        function autoSubmit() {
+            alert('Time is up! Your exam will be submitted automatically.');
+            submitExam();
+        }
+
+        // Save answer
+        function saveAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (selectedOption && currentQuestionId) {
+                const token = getCSRFToken();
+                fetch('/exam/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': token
+                    },
+                    body: JSON.stringify({
+                        action: 'save_answer',
+                        question_id: currentQuestionId,
+                        answer: selectedOption.value
+                    })
+                }).catch(error => console.error('Error saving answer:', error));
+            }
+        }
+
+        // Navigation functions - use next/previous actions which update session and return question data
+        function goToNext() {
+            saveAnswer();
+            const token = getCSRFToken();
+            fetch('/exam/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': token
+                },
+                body: JSON.stringify({ action: 'next' })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Next response:', data);
+                if (data.status === 'success' && data.question) {
+                    displayQuestion(data);
+                } else if (data.status === 'error') {
+                    console.error('Navigation error:', data.message);
+                    alert('Error: ' + data.message);
+                } else {
+                    console.error('Unexpected response:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error navigating to next:', error);
+                alert('Error navigating to next question. Please try again.');
+            });
+        }
+
+        function goToPrevious() {
+            saveAnswer();
+            const token = getCSRFToken();
+            fetch('/exam/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': token
+                },
+                body: JSON.stringify({ action: 'previous' })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success' && data.question) {
+                    displayQuestion(data);
+                } else if (data.status === 'error') {
+                    console.error('Navigation error:', data.message);
+                }
+            })
+            .catch(error => console.error('Error navigating to previous:', error));
+        }
+
+        function submitExam() {
+            if (confirm('Are you sure you want to submit the exam?')) {
+                saveAnswer();
+                const token = getCSRFToken();
+                fetch('/exam/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': token
+                    },
+                    body: JSON.stringify({ action: 'submit' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'submitted') {
+                        window.location.href = '/exam/result/';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting exam:', error);
+                    alert('Error submitting exam. Please try again.');
+                });
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Get CSRF token
+            csrfToken = getCSRFToken();
+            
+            // Only initialize exam if exam-content div exists (meaning there are questions)
+            const examContent = document.getElementById('exam-content');
+            const loading = document.getElementById('loading');
+
+            if (examContent && loading) {
+                // Sync timer with server first, then start timer
+                await syncTimer();
+                
+                // Start timer only after syncing
+                timerInterval = setInterval(updateTimer, 1000);
+
+                // Load first question
+                loadQuestion(0);
+
+                // Show exam content
+                loading.style.display = 'none';
+                examContent.style.display = 'block';
+
+                // Navigation buttons
+                const nextBtn = document.getElementById('next-btn');
+                const prevBtn = document.getElementById('prev-btn');
+                const submitBtn = document.getElementById('submit-btn');
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        goToNext();
+                    });
+                }
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        goToPrevious();
+                    });
+                }
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        submitExam();
+                    });
+                }
+
+                // Prevent right-click and some keyboard shortcuts
+                document.addEventListener('contextmenu', e => e.preventDefault());
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'c')) {
+                        e.preventDefault();
+                    }
+                    if (e.key === 'F12') {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

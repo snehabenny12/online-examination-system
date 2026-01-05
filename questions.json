@@ -1,0 +1,42 @@
+[
+    {
+        "question_text": "What is the capital of France?",
+        "option1": "London",
+        "option2": "Paris",
+        "option3": "Berlin",
+        "option4": "Madrid",
+        "correct_answer": "Paris"
+    },
+    {
+        "question_text": "What is 2 + 2?",
+        "option1": "3",
+        "option2": "4",
+        "option3": "5",
+        "option4": "6",
+        "correct_answer": "4"
+    },
+    {
+        "question_text": "What is the largest planet in our solar system?",
+        "option1": "Earth",
+        "option2": "Mars",
+        "option3": "Jupiter",
+        "option4": "Saturn",
+        "correct_answer": "Jupiter"
+    },
+    {
+        "question_text": "What is the color of the sky on a clear day?",
+        "option1": "Green",
+        "option2": "Blue",
+        "option3": "Red",
+        "option4": "Yellow",
+        "correct_answer": "Blue"
+    },
+    {
+        "question_text": "How many continents are there?",
+        "option1": "5",
+        "option2": "6",
+        "option3": "7",
+        "option4": "8",
+        "correct_answer": "7"
+    }
+]

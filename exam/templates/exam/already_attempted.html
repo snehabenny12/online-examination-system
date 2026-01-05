@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Already Attempted</title>
+    <link rel="stylesheet" href="{% static 'exam/style.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #764ba2;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #4a5568;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        strong {
+            color: #2d3748;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        a:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>You have already attempted the exam</h2>
+
+    <p><strong>Score:</strong> {{ score }}</p>
+    <p><strong>Percentage:</strong> {{ percentage }}%</p>
+    <p><strong>Result:</strong> {{ result }}</p>
+
+    <br>
+    <a href="{% url 'logout' %}">Logout</a>
+</div>
+
+</body>
+</html>

@@ -8,19 +8,20 @@ Secure login, automatic evaluation, and exam result storage ensure a real-world 
 
 ---
 
-## Key Features
 - Student registration and secure login  
 - Dynamic MCQ exam loading from database  
+- **Timed exams** with automatic submission after the timer expires  
 - Automatic score calculation and result display  
-- Exam reattempt restriction for fairness  
+- Exam reattempt restriction for fairness 
 
 ---
 
 ## Workflow
 1. **Login / Register:** Students create an account or log in.  
 2. **Take Exam:** Questions are fetched from the database.  
-3. **Submit & View Result:** Score, percentage, and pass/fail status displayed.  
-4. **Reattempt Restriction:** Students cannot retake the same exam.
+3. **Timed Exam:** A countdown timer ensures exams are completed within the allocated time.  
+4. **Submit & View Result:** Score, percentage, and pass/fail status displayed automatically.  
+5. **Reattempt Restriction:** Students cannot retake the same exam.
 
 ---
 

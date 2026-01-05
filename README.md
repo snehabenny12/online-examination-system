@@ -3,7 +3,7 @@
 CLI-based Online Examination System using Python.
 
 ## Overview
-A Python-based web application for students to **register, log in, take MCQ exams, and get instant results**.  
+A Python-based application for students to **register, log in, take timed MCQ exams, and get instant results**.  
 Secure login, automatic evaluation, and exam result storage ensure a real-world examination experience.
 
 ---

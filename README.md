@@ -24,6 +24,16 @@ Secure login, automatic evaluation, and exam result storage ensure a real-world 
 4. **Reattempt Restriction:** Students cannot retake the same exam.
 
 ---
+## Project Structure
+online-exam-system/
+├── manage.py
+├── exam/
+│   ├── models.py
+│   ├── views.py
+│   ├── templates/
+│   └── urls.py
+├── exam_project/
+└── README.md
 
 ## Installation
 ```bash
